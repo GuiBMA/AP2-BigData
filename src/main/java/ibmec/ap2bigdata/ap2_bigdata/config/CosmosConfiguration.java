@@ -11,7 +11,7 @@ import com.azure.spring.data.cosmos.repository.config.EnableCosmosRepositories;
 
 @Configuration
 @EnableConfigurationProperties(CosmosProperties.class)
-@EnableCosmosRepositories(basePackages = "br.edu.ibmec.cloud.ecommerce.repository")
+@EnableCosmosRepositories(basePackages = "ibmec.ap2bigdata.ap2_bigdata.repository")
 @PropertySource("classpath:application.properties")
 public class CosmosConfiguration extends AbstractCosmosConfiguration {
     private CosmosProperties properties;
