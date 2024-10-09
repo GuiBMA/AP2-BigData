@@ -38,6 +38,19 @@ public class ProductService {
         this.productRepository.deleteById(productId, new PartitionKey(optProduct.get().getProductCategory()));
     }
 
+    public void update(String productId, Product product) throws Exception {
+        Optional<Product> optProduct = this.productRepository.findById(productId);
+    
+        if (!optProduct.isPresent()) {
+            throw new Exception("Não encontrei o produto a ser atualizado");
+        }
+    
+        product.setProductId(optProduct.get().getProductId());
+        product.setProductCategory(optProduct.get().getProductCategory());
+        this.productRepository.save(product);
+    }
+    
+
     public List<Product> findByCategory(String category) {
         return this.productRepository.findByProductCategory(category);
     }

@@ -35,7 +35,6 @@ public class ProductController {
     @GetMapping(value = "/category/{category}")
     public ResponseEntity<List<Product>> getByCategory(@PathVariable("category") String category) {
         List<Product> products = this.service.findByCategory(category);
-
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
@@ -51,6 +50,14 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PutMapping("{id}")
+    public ResponseEntity update(@PathVariable("id") String id, @RequestBody Product product) throws Exception{
+        try {
+            this.service.update(id, product);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
 
-     
 }
