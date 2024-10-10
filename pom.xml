@@ -31,6 +31,14 @@
 		<spring-cloud-azure.version>5.16.0</spring-cloud-azure.version>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>in.hocg.boot</groupId>
+			<artifactId>spring-boot-web</artifactId>
+			<version>1.0.60</version>
+			<type>pom</type>
+		</dependency>
+
 		<!-- Spring Boot Starter Core -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

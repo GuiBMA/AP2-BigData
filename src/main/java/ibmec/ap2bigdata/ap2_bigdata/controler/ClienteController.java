@@ -1,9 +1,13 @@
-package main.java.ibmec.ap2bigdata.ap2_bigdata.controler;
+package ibmec.ap2bigdata.ap2_bigdata.controler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.azure.cosmos.models.PartitionKey;
+
+import ibmec.ap2bigdata.ap2_bigdata.entity.Cliente;
+import ibmec.ap2bigdata.ap2_bigdata.service.ClienteService;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

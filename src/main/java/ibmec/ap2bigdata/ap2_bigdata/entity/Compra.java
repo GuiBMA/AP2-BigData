@@ -1,4 +1,4 @@
-package main.java.ibmec.ap2bigdata.ap2_bigdata.entity;
+package ibmec.ap2bigdata.ap2_bigdata.entity;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import lombok.Data;

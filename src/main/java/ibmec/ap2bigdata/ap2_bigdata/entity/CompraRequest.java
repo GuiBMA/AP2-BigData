@@ -1,4 +1,4 @@
-package main.java.ibmec.ap2bigdata.ap2_bigdata.entity;
+package ibmec.ap2bigdata.ap2_bigdata.entity;
 import lombok.Data;
 import java.util.List;
 

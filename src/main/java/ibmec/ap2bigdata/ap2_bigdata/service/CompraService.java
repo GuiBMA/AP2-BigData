@@ -1,7 +1,15 @@
-package main.java.ibmec.ap2bigdata.ap2_bigdata.service;
+package ibmec.ap2bigdata.ap2_bigdata.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.azure.cosmos.models.PartitionKey;
+
+import ibmec.ap2bigdata.ap2_bigdata.entity.Cliente;
+import ibmec.ap2bigdata.ap2_bigdata.entity.Compra;
+import ibmec.ap2bigdata.ap2_bigdata.entity.Product;
+import ibmec.ap2bigdata.ap2_bigdata.repository.ClienteRepository;
+import ibmec.ap2bigdata.ap2_bigdata.repository.CompraRepository;
+import ibmec.ap2bigdata.ap2_bigdata.repository.ProductRepository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
