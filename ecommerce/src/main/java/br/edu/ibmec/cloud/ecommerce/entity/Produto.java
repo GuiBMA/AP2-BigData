@@ -1,5 +1,4 @@
 package br.edu.ibmec.cloud.ecommerce.entity;
-
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
 import jakarta.validation.constraints.NotBlank;

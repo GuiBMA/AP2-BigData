@@ -1,7 +1,5 @@
 package br.edu.ibmec.cartao_credito.model;
-
 import java.time.LocalDateTime;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.Data;
 
 @Data

@@ -1,7 +1,5 @@
 package br.edu.ibmec.cloud.ecommerce.request;
-
 import java.time.LocalDateTime;
-
 import lombok.Data;
 
 @Data

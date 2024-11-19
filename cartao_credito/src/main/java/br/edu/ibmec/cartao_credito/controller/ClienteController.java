@@ -1,16 +1,13 @@
 package br.edu.ibmec.cartao_credito.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import br.edu.ibmec.cartao_credito.model.Cartao;
+import br.edu.ibmec.cartao_credito.model.Cliente;
+import br.edu.ibmec.cartao_credito.repository.ClienteRepository;
+import br.edu.ibmec.cartao_credito.service.ClienteService;
 import jakarta.validation.Valid;
-
-import br.edu.ibmec.projeto_cloud.repository.ClienteRepository;
-import br.edu.ibmec.projeto_cloud.service.ClienteService;
-import br.edu.ibmec.projeto_cloud.model.Cliente;
-import br.edu.ibmec.projeto_cloud.model.Cartao;
-
 import java.util.List;
 import java.util.Optional;
 

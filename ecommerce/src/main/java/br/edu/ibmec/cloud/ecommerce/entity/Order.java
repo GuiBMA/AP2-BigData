@@ -1,13 +1,8 @@
 package br.edu.ibmec.cloud.ecommerce.entity;
-
 import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.Id;
-
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
-
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data

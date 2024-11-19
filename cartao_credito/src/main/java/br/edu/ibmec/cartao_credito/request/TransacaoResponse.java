@@ -1,8 +1,6 @@
 package br.edu.ibmec.cartao_credito.request;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import lombok.Data;
 
 @Data

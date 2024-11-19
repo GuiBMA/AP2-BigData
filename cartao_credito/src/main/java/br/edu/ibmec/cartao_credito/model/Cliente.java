@@ -1,12 +1,9 @@
 package br.edu.ibmec.cartao_credito.model;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.validator.constraints.br.CPF;
 import jakarta.validation.constraints.Pattern;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +17,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Past;
-
 import lombok.Data;
 
 @Data

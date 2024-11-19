@@ -1,11 +1,8 @@
 package br.edu.ibmec.cartao_credito.model;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

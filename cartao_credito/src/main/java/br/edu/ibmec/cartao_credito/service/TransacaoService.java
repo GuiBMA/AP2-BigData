@@ -1,20 +1,17 @@
 package br.edu.ibmec.cartao_credito.service;
-
-import br.edu.ibmec.projeto_cloud.exception.CartaoException;
-import br.edu.ibmec.projeto_cloud.exception.ClienteException;
-import br.edu.ibmec.projeto_cloud.exception.TransacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import br.edu.ibmec.projeto_cloud.repository.TransacaoRepository;
-import br.edu.ibmec.projeto_cloud.repository.CartaoRepository;
-import br.edu.ibmec.projeto_cloud.repository.NotificacaoRepository;
-import br.edu.ibmec.projeto_cloud.repository.ClienteRepository;
-import br.edu.ibmec.projeto_cloud.model.Transacao;
-import br.edu.ibmec.projeto_cloud.model.Cartao;
-import br.edu.ibmec.projeto_cloud.model.Notificacao;
-import br.edu.ibmec.projeto_cloud.model.Cliente;
-
+import br.edu.ibmec.cartao_credito.exception.CartaoException;
+import br.edu.ibmec.cartao_credito.exception.ClienteException;
+import br.edu.ibmec.cartao_credito.exception.TransacaoException;
+import br.edu.ibmec.cartao_credito.model.Cartao;
+import br.edu.ibmec.cartao_credito.model.Cliente;
+import br.edu.ibmec.cartao_credito.model.Notificacao;
+import br.edu.ibmec.cartao_credito.model.Transacao;
+import br.edu.ibmec.cartao_credito.repository.CartaoRepository;
+import br.edu.ibmec.cartao_credito.repository.ClienteRepository;
+import br.edu.ibmec.cartao_credito.repository.NotificacaoRepository;
+import br.edu.ibmec.cartao_credito.repository.TransacaoRepository;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.List;
