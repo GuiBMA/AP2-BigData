@@ -1,4 +1,4 @@
-package br.edu.ibmec.projeto_cloud.repository;
+package br.edu.ibmec.cartao_credito.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

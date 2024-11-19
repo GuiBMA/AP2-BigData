@@ -1,4 +1,4 @@
-package br.edu.ibmec.projeto_cloud.model;
+package br.edu.ibmec.cartao_credito.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package br.edu.ibmec.projeto_cloud.exception;
+package br.edu.ibmec.cartao_credito.exception;
 
 public class TransacaoException extends RuntimeException{
     public TransacaoException(String message){
