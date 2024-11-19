@@ -1,91 +1,170 @@
 package br.edu.ibmec.cartao_credito.service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
+import br.edu.ibmec.projeto_cloud.exception.CartaoException;
+import br.edu.ibmec.projeto_cloud.exception.ClienteException;
+import br.edu.ibmec.projeto_cloud.exception.TransacaoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.edu.ibmec.cartao_credito.model.Cartao;
-import br.edu.ibmec.cartao_credito.model.Transacao;
-import br.edu.ibmec.cartao_credito.repository.CartaoRepository;
-import br.edu.ibmec.cartao_credito.repository.TransacaoRepository;
+import br.edu.ibmec.projeto_cloud.repository.TransacaoRepository;
+import br.edu.ibmec.projeto_cloud.repository.CartaoRepository;
+import br.edu.ibmec.projeto_cloud.repository.NotificacaoRepository;
+import br.edu.ibmec.projeto_cloud.repository.ClienteRepository;
+import br.edu.ibmec.projeto_cloud.model.Transacao;
+import br.edu.ibmec.projeto_cloud.model.Cartao;
+import br.edu.ibmec.projeto_cloud.model.Notificacao;
+import br.edu.ibmec.projeto_cloud.model.Cliente;
+
+import java.time.LocalDateTime;
+import java.time.Duration;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransacaoService {
-
     @Autowired
-    private TransacaoRepository repository;
+    private TransacaoRepository transacaoRepository;
 
     @Autowired
     private CartaoRepository cartaoRepository;
 
-    private final long TRANSACTION_TIME_INTERVAL = 3;
+    @Autowired
+    private NotificacaoRepository notificacaoRepository;
 
-    public Transacao autorizacaoTransacao(Cartao cartao, double valor, String comerciante) throws Exception {
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-        // Cartao está ativo
-        if (cartao.getAtivo() == false) {
-            throw new Exception("Cartão não está ativo");
+    public Transacao createTransacao(int id, Double valor, String comerciante, LocalDateTime dataTransacao) throws Exception {
+        Transacao tryTransacao = new Transacao();
+        tryTransacao.setComerciante(comerciante);
+        tryTransacao.setValor(valor);
+        tryTransacao.setDataTransacao(dataTransacao);
+        
+        Optional<Cartao> cartaoOptional = cartaoRepository.findById(id);
+
+        if (!cartaoOptional.isPresent())
+            return null;
+        
+        Cartao cartao = cartaoOptional.get();
+
+        Optional<Cliente> clienteOptional = clienteRepository.findByCartoes(cartao);
+
+        if (!clienteOptional.isPresent())
+            throw new ClienteException("Erro ao achar o cliente");
+
+        Cliente cliente = clienteOptional.get();
+
+        Notificacao notificacao = new Notificacao();
+        
+        String ultimosQuatroDigitos = cartao.getNumeroCartao().substring(cartao.getNumeroCartao().length() - 4);
+
+        notificacao.setTipoNotificacao("Tentativa de transação");
+        notificacao.setDataNotificacao(tryTransacao.getDataTransacao());
+
+        String mensagemBase = "Tentativa de transação no cartão com final " + ultimosQuatroDigitos + ". Motivo da recusa: ";
+
+        if (!cartao.getEstaAtivado()) {
+            notificacao.setMensagem(mensagemBase + "Cartão desativado");
+            cliente.associarNotificacao(notificacao);
+            notificacaoRepository.save(notificacao);
+
+            throw new CartaoException("Cartão desativado.");
         }
 
-        // Cartão tem limite para compra
-        if (cartao.getLimite() < valor) {
-            throw new Exception("Cartão sem limite para efetuar a compra");
+        if (cartao.getSaldo() < tryTransacao.getValor()) {
+            // Envia notificação
+            notificacao.setMensagem(mensagemBase + "Saldo insuficiente");
+            cliente.associarNotificacao(notificacao);
+            notificacaoRepository.save(notificacao);
+
+            throw new TransacaoException("Saldo insuficiente para a compra");
         }
 
-        //Verificar regras
-        this.verificarAntifraude(cartao, valor, comerciante);
+        if (cartao.getLimite() < tryTransacao.getValor()) {
+            notificacao.setMensagem(mensagemBase + "Limite insuficiente");
+            cliente.associarNotificacao(notificacao);
+            notificacaoRepository.save(notificacao);
 
-        //Passou nas regras, criar um nova transação
-        Transacao transacao = new Transacao();
-        transacao.setComerciante(comerciante);
-        transacao.setDataTransacao(LocalDateTime.now());
-        transacao.setValor(valor);
+            throw new TransacaoException("Limite insuficiente para a compra");
+        }
 
-        //Salva na base de dados
-        repository.save(transacao);
+        List<Transacao> transacoesDuplicadas = transacaoRepository.findByValorAndComerciante(
+            tryTransacao.getValor(), tryTransacao.getComerciante()
+        );
 
-        //Diminui o limite do cartao
-        cartao.setLimite(cartao.getLimite() - valor);
+        List<Transacao> transacoesCartao = cartao.getTransacoes();
 
-        //Associa a transacao ao cartao 
-        cartao.getTransacoes().add(transacao);
+        int transacoesNosUltimosDoisMinutos = 0;
 
-        //Atualiza a base de dados com a nova transação para o cartao e atualiza o limite
+        for (Transacao transacaoCartao : transacoesCartao) {
+            if (verificaMinutagem(transacaoCartao.getDataTransacao(), tryTransacao.getDataTransacao())) {
+                transacoesNosUltimosDoisMinutos++;
+            }
+        }
+
+        if (transacoesNosUltimosDoisMinutos >= 3) {
+            notificacao.setMensagem(mensagemBase + "Alta frequência de transações");
+            cliente.associarNotificacao(notificacao);
+            notificacaoRepository.save(notificacao);
+
+            throw new TransacaoException("Limite de 3 transações em 2 minutos excedido.");
+        }
+
+        for (Transacao transacaoDuplicada : transacoesDuplicadas) {
+            for (Transacao transacaoCartao : transacoesCartao) {
+                if (transacaoCartao.getValor() == transacaoDuplicada.getValor() &&
+                    transacaoCartao.getComerciante().equals(transacaoDuplicada.getComerciante())) {
+                    if (verificaMinutagem(transacaoCartao.getDataTransacao(), tryTransacao.getDataTransacao())) {
+                        notificacao.setMensagem(mensagemBase + "Transação duplicada");
+                        cliente.associarNotificacao(notificacao);
+                        notificacaoRepository.save(notificacao);
+                        System.out.println(transacaoCartao.getDataTransacao());
+                        System.out.println(transacaoDuplicada.getDataTransacao());
+                        System.out.println(tryTransacao.getDataTransacao());
+            
+                        throw new TransacaoException("Transação duplicada encontrada.");
+                    }
+                }
+            }
+        }
+        notificacao.setTipoNotificacao("Transação aprovada");
+        notificacao.setMensagem("Transação aprovada no cartão com final " + ultimosQuatroDigitos + ". Valor de R$" + tryTransacao.getValor() + " em " + tryTransacao.getComerciante());
+
+        cliente.associarNotificacao(notificacao);
+
+        notificacaoRepository.save(notificacao);
+
+        cartao.adicionarTransacao(tryTransacao);
+
+        transacaoRepository.save(tryTransacao);
+
+        cartao.setSaldo(cartao.getSaldo() - tryTransacao.getValor());
+
         cartaoRepository.save(cartao);
-
-        return transacao;
-
+        
+        return tryTransacao;
     }
 
-    private void verificarAntifraude(Cartao cartao, double valor, String comerciante) throws Exception {
+    public List<Transacao> getExtratoByCartao(int id) throws Exception {
+        Optional<Cartao> cartaoExistente = cartaoRepository.findById(id);
 
-        // Valida se o cartão tem transações nos ultimos 3 minutos
-        LocalDateTime localDateTime = LocalDateTime.now().minus(TRANSACTION_TIME_INTERVAL, ChronoUnit.MINUTES);
+        if (!cartaoExistente.isPresent())
+            return null;
+        
+        Cartao cartao = cartaoExistente.get();
 
-        List<Transacao> ultimasTransacoes = cartao
-                .getTransacoes()
-                .stream()
-                .filter(x -> x.getDataTransacao().isAfter(localDateTime))
-                .toList();
+        List<Transacao> transacoes = cartao.getTransacoes()
+                                           .stream()
+                                           .filter(x -> x.getDataTransacao().getMonth() == LocalDateTime.now().getMonth() && x.getDataTransacao().getYear() == LocalDateTime.now().getYear() )
+                                           .toList();
+        
+        return transacoes;
+    }
 
-        /*
-         * List<Transacao> ultimasTransacoes = new ArrayList<>();
-         * 
-         * for (Transacao transacao : cartao.getTransacoes()) {
-         * if (transacao.getDataTransacao().isAfter(localDateTime)) {
-         * ultimasTransacoes.add(transacao);
-         * }
-         * }
-         */
+    private boolean verificaMinutagem(LocalDateTime dataTransacaoExistente, LocalDateTime dataTransacaoNova) {
+        Duration duration = Duration.between(dataTransacaoExistente, dataTransacaoNova);
 
-        if (ultimasTransacoes.size() >= 3) {
-            throw new Exception("Cartão utilizado muitas vezes em um período curto");
-        }
-
+        return Math.abs(duration.toMinutes()) < 2;
     }
 
 }
