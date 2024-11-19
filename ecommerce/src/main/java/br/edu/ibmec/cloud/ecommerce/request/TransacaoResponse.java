@@ -3,12 +3,13 @@ package br.edu.ibmec.cloud.ecommerce.request;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
-public class CheckoutResponse {
-    private String idProduto;
-    private String status;
+public class TransacaoResponse {
     private LocalDateTime dataTransacao;
+    private double valor;
+    private String status;
     private String erro;
-    private String idOrder;
+    private UUID codigoAutorizacao;
 }
