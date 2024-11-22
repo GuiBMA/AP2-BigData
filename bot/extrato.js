@@ -7,11 +7,17 @@ class Extrato {
 
     urlApi = process.env.EXTRATO_URL_API;
 
+    async getIdByCPF(cpf) {
+        const headers = {
+            'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
+        };
+        return await axios.get(`${this.urlApi}/buscar-id?cpf=${cpf}`, { headers });
+    }
     async getExtrato(idUser, numeroCartao) {
         const headers = {
             'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
         };
-
+        // mudar idUser para getIdByCPF(idUser)
         return await axios.get(`${this.urlApi}/${idUser}?numeroCartao=${numeroCartao}`);
     }
 

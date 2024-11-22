@@ -111,6 +111,47 @@ class ProductDialog extends ComponentDialog {
         // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
         return await step.endDialog();
     }
+
+    // async confirmStep(step) {
+    //     switch (step.values.choice) {
+    //         case "Consultar Pedidos":
+    //         case "Extrato de Compras": {
+    //             const cpf = step.values.id; // O CPF digitado pelo usuário
+    //             const cardNumber = step.result;
+                
+    //             let extrato = new Extrato();
+    
+    //             try {
+    //                 // Obter o ID a partir do CPF
+    //                 const idResponse = await extrato.getIdByCPF(cpf);
+    //                 const userId = idResponse.data.id; // Supondo que a resposta tenha o campo "id"
+    
+    //                 // Obter o extrato usando o ID encontrado
+    //                 const response = await extrato.getExtrato(userId, cardNumber);
+    //                 const result = extrato.formatExtrato(response.data);
+    
+    //                 // Enviar a mensagem formatada ao usuário
+    //                 const message = MessageFactory.text(result);
+    //                 await step.context.sendActivity(message);
+    //             } catch (error) {
+    //                 console.error('Erro ao buscar ID ou extrato:', error);
+    //                 await step.context.sendActivity('Houve um erro ao processar sua solicitação. Tente novamente mais tarde.');
+    //             }
+    //             break;
+    //         }
+    //         case "Consultar Produtos": {
+    //             const productName = step.values.id;
+    //             const produto = new Produto();
+    //             const response = await produto.getProduto(productName);
+    //             const card = produto.createProductCard(response.data[0]);
+    //             await step.context.sendActivity({ attachments: [card] });
+    //             break;
+    //         }
+    //     }
+    
+    //     return await step.endDialog();
+    // }
+    
 }
 
 module.exports.ProductDialog = ProductDialog;
