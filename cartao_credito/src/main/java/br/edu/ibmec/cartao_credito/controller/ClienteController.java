@@ -30,13 +30,26 @@ public class ClienteController {
     public ResponseEntity<Cliente> getClienteById(@PathVariable("id") int id) {
         Optional<Cliente> tryResponse = clienteRepository.findById(id);
 
-        if (!tryResponse.isPresent())
+        if (!tryResponse.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
         Cliente response = tryResponse.get();
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping("/buscar-id/{cpf}")
+    public ResponseEntity<Integer> getClienteIdByCpf(@PathVariable("cpf") String cpf) {
+        Optional<Cliente> clienteOptional = clienteRepository.findByCpf(cpf);
+
+        if (!clienteOptional.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Cliente cliente = clienteOptional.get();
+        return new ResponseEntity<>(cliente.getId(), HttpStatus.OK);
+    }
+
     
     @PostMapping
     public ResponseEntity<Cliente> saveCliente(@Valid @RequestBody Cliente cliente) throws Exception {
