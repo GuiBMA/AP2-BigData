@@ -72,7 +72,7 @@ class ProductDialog extends ComponentDialog {
         switch(step.values.choice) {
             case "Consultar Pedidos":
             case "Extrato de Compras": {
-                return await step.prompt(NAME_PROMPT, 'Digite o seu Id');        
+                return await step.prompt(NAME_PROMPT, 'Digite o seu CPF');        
             }
             case "Consultar Produtos": {
                 return await step.prompt(NAME_PROMPT, 'Digite o nome do produto');        
@@ -107,8 +107,6 @@ class ProductDialog extends ComponentDialog {
                 break
             }
         }
-
-        // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
         return await step.endDialog();
     }
 

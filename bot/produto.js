@@ -5,19 +5,10 @@ class Produto {
 
     urlApi = process.env.PRODUTO_URL_API;
 
-    async getIdByCPF(cpf) {
-        const headers = {
-            'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
-        };
-        return await axios.get(`${this.urlApi}/buscar-id?cpf=${cpf}`, { headers });
-    }
-    
-
     async getProduto(productName) {
         const headers = {
             'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
         };
-        // mudar productName para getIdByCPF(productName)
         return await axios.get(`${this.urlApi}?productName=${productName}`, {headers: headers});
     }
     createProductCard(response) {

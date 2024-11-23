@@ -17,8 +17,7 @@ class Extrato {
         const headers = {
             'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
         };
-        // mudar idUser para getIdByCPF(idUser)
-        return await axios.get(`${this.urlApi}/${idUser}?numeroCartao=${numeroCartao}`);
+        return await axios.get(`${this.urlApi}/${getIdByCPF(idUser)}?numeroCartao=${numeroCartao}`);
     }
 
     formatExtrato(response) {
