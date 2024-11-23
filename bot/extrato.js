@@ -6,18 +6,19 @@ const format = require('date-format');
 class Extrato {
 
     urlApi = process.env.EXTRATO_URL_API;
+    apimKey = process.env.APIM_KEY;
 
     async getIdByCPF(cpf) {
         const headers = {
-            'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
+            'ocp-apim-subscription-key': apimKey
         };
         return await axios.get(`${this.urlApi}/buscar-id?cpf=${cpf}`, { headers });
     }
-    async getExtrato(idUser, numeroCartao) {
+    async getExtrato(cpfUser, numeroCartao) {
         const headers = {
-            'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
+            'ocp-apim-subscription-key': apimKey
         };
-        return await axios.get(`${this.urlApi}/${getIdByCPF(idUser)}?numeroCartao=${numeroCartao}`);
+        return await axios.get(`${this.urlApi}/${getIdByCPF(cpfUser)}?numeroCartao=${numeroCartao}`);
     }
 
     formatExtrato(response) {

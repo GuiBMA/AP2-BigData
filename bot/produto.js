@@ -4,10 +4,11 @@ const { CardFactory } = require('botbuilder');
 class Produto {
 
     urlApi = process.env.PRODUTO_URL_API;
+    apimKey = process.env.APIM_KEY;
 
     async getProduto(productName) {
         const headers = {
-            'ocp-apim-subscription-key': '8ef0a7b573104f31bbdc17d838c76a2a'
+            'ocp-apim-subscription-key': apimKey
         };
         return await axios.get(`${this.urlApi}?productName=${productName}`, {headers: headers});
     }
