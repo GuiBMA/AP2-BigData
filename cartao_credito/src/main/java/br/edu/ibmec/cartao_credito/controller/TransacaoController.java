@@ -7,6 +7,7 @@ import br.edu.ibmec.cartao_credito.exception.ClienteException;
 import br.edu.ibmec.cartao_credito.model.Cartao;
 import br.edu.ibmec.cartao_credito.model.Cliente;
 import br.edu.ibmec.cartao_credito.model.Transacao;
+import br.edu.ibmec.cartao_credito.repository.CartaoRepository;
 import br.edu.ibmec.cartao_credito.repository.ClienteRepository;
 import br.edu.ibmec.cartao_credito.repository.TransacaoRepository;
 import br.edu.ibmec.cartao_credito.request.TransacaoRequest;
@@ -28,6 +29,9 @@ public class TransacaoController {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private CartaoRepository cartaoRepository;
+
 
     @GetMapping("{id}")
     public ResponseEntity<Transacao> getTransacaoById(@PathVariable("id") int id) {
@@ -39,6 +43,18 @@ public class TransacaoController {
         Transacao response = tryResponse.get();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/buscar-id-cartao/{numeroCartao}")
+    public ResponseEntity<Integer> getIdCartaoByNumeroCartao(@PathVariable("numeroCartao") String numeroCartao) {
+        Optional<Cartao> cartaoOptional = Optional.ofNullable(cartaoRepository.findByNumeroCartao(numeroCartao));
+
+        if (cartaoOptional == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Retorna o ID do cartão
+        return new ResponseEntity<>(cartaoOptional.get().getId(), HttpStatus.OK);
     }
 
     @GetMapping("extrato-cartao/{id}")

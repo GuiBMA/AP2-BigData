@@ -66,7 +66,22 @@ class ProductDialog extends ComponentDialog {
 
     async confirmStep(step) {
         try {
+            const extrato = new Extrato();
+    
             switch (step.values.choice) {
+                case "Extrato de Compras": {
+                    const cpf = step.values.id; // CPF fornecido
+                    const numeroCartao = step.result; // Número do cartão fornecido
+                    // Obtém o ID do cartão
+                    const idCartao = await extrato.getIdCartao(cpf, numeroCartao);
+                    // Obtém o extrato do cartão
+                    const response = await extrato.getExtrato(idCartao);
+                    // Formata e envia o extrato
+                    const result = extrato.formatExtrato(response);
+                    await step.context.sendActivity(MessageFactory.text(result));
+                    break;
+                }
+                
                 case "Consultar Produtos": {
                     const productName = step.values.id;
                     const produto = new Produto();
@@ -75,25 +90,22 @@ class ProductDialog extends ComponentDialog {
                     await step.context.sendActivity({ attachments: [card] });
                     break;
                 }
-
-                case "Consultar Pedidos":
-                case "Extrato de Compras": {
+    
+                case "Consultar Pedidos": {
                     const id = step.values.id;
-                    const cardNumber = step.values.choice === "Extrato de Compras" ? step.result : null;
-                    const extrato = new Extrato();
-                    const response = await extrato.getExtrato(id, cardNumber);
-                    const result = extrato.formatExtrato(response.data);
-                    await step.context.sendActivity(MessageFactory.text(result));
+                    const pedidos = await extrato.getPedidos(id);
+                    await step.context.sendActivity(MessageFactory.text(pedidos));
                     break;
                 }
             }
         } catch (error) {
             console.error('Erro no processamento:', error);
-            await step.context.sendActivity('Ocorreu um erro. Por favor, tente novamente.');
+            await step.context.sendActivity('Ocorreu um erro ao processar sua solicitação. Tente novamente mais tarde.');
         }
-
+    
         return step.next();
     }
+    
 
     async repeatOrEndStep(step) {
         return await step.prompt(CHOICE_PROMPT, {
