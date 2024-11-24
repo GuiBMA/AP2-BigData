@@ -2,15 +2,16 @@ const axios = require('axios').default;
 const { CardFactory } = require('botbuilder');
 
 class Produto {
-
-    urlApi = process.env.PRODUTO_URL_API;
-    apimKey = process.env.APIM_KEY;
+    constructor() {
+        this.urlApi = process.env.EXTRATO_URL_API; // URL base da API
+        this.apimKey = process.env.APIM_KEY;      // Chave de assinatura da APIM
+    }
 
     async getProduto(productName) {
         const headers = {
-            'ocp-apim-subscription-key': apimKey
+            'ocp-apim-subscription-key': this.apimKey
         };
-        return await axios.get(`${this.urlApi}?productName=${productName}`, {headers: headers});
+        return await axios.get(`${this.urlApi}?productName=${productName}`, { headers });
     }
     createProductCard(response) {
         return CardFactory.thumbnailCard(

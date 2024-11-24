@@ -12,7 +12,6 @@ const { Produto } = require("../produto");
 const { Extrato } = require('../extrato');
 
 const NAME_PROMPT = 'NAME_PROMPT';
-const CARTAO_NUMBER_PROMPT = 'CARTAO_NUMBER_PROMPT';
 const CHOICE_PROMPT = 'CHOICE_PROMPT';
 const WATERFALL_DIALOG = 'WATERFALL_DIALOG';
 
@@ -22,14 +21,12 @@ class ProductDialog extends ComponentDialog {
 
         // Prompts necessários
         this.addDialog(new TextPrompt(NAME_PROMPT));
-        this.addDialog(new TextPrompt(CARTAO_NUMBER_PROMPT));
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
 
         // Configuração do fluxo
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
             this.menuStep.bind(this),
-            this.productNameStep.bind(this),
-            this.optionalCartaoNumberStep.bind(this),
+            this.tipoStep.bind(this),
             this.confirmStep.bind(this),
             this.repeatOrEndStep.bind(this)
         ]));
@@ -44,24 +41,17 @@ class ProductDialog extends ComponentDialog {
         });
     }
 
-    async productNameStep(step) {
+    async tipoStep(step) {
         step.values.choice = step.result.value;
 
         if (step.values.choice === "Consultar Produtos") {
             return await step.prompt(NAME_PROMPT, 'Digite o nome do produto:');
         }
-
-        return await step.prompt(NAME_PROMPT, 'Digite o seu CPF:');
-    }
-
-    async optionalCartaoNumberStep(step) {
-        step.values.id = step.result;
-
-        if (step.values.choice === "Extrato de Compras") {
-            return await step.prompt(CARTAO_NUMBER_PROMPT, 'Digite o número do cartão:');
+        if (step.values.choice === "Consultar Pedidos") {
+            return await step.prompt(NAME_PROMPT, 'Digite o seu CPF:');
         }
 
-        return step.next();
+        return await step.prompt(NAME_PROMPT, 'Digite o número do cartão:');
     }
 
     async confirmStep(step) {
@@ -70,10 +60,9 @@ class ProductDialog extends ComponentDialog {
     
             switch (step.values.choice) {
                 case "Extrato de Compras": {
-                    const cpf = step.values.id; // CPF fornecido
-                    const numeroCartao = step.result; // Número do cartão fornecido
+                    const numeroCartao = step.values.id;
                     // Obtém o ID do cartão
-                    const idCartao = await extrato.getIdCartao(cpf, numeroCartao);
+                    const idCartao = await extrato.getIdCartao(numeroCartao);
                     // Obtém o extrato do cartão
                     const response = await extrato.getExtrato(idCartao);
                     // Formata e envia o extrato
@@ -81,7 +70,7 @@ class ProductDialog extends ComponentDialog {
                     await step.context.sendActivity(MessageFactory.text(result));
                     break;
                 }
-                
+
                 case "Consultar Produtos": {
                     const productName = step.values.id;
                     const produto = new Produto();
