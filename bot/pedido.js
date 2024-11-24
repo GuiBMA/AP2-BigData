@@ -1,30 +1,81 @@
-const axios = require('axios').default;
-const format = require('date-format');
+const { ComponentDialog, WaterfallDialog, TextPrompt } = require('botbuilder-dialogs');
+const axios = require('axios'); // Importa o axios
 
-class Pedido {
-    urlApi = process.env.EXTRATO_URL_API;
-    apiKey = process.env.GATEWAY_ACCESS_KEY;
+const WATERFALL_DIALOG = 'waterfallDialog';
+const ID_PROMPT = 'idPrompt';
 
-    async getPedido(id) {
-        const headers = {
-            'ocp-apim-subscription-key': this.apiKey
-        };
+class Pedido extends ComponentDialog {
+    constructor(id) {
+        super(id);
 
-        return await axios.get(`${this.urlApi}/${id}`, { headers });
+        // Adicionar o TextPrompt para solicitar o ID do pedido
+        this.addDialog(new TextPrompt(ID_PROMPT));
+
+        // Configurar o WaterfallDialog com os novos passos
+        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
+            this.promptForIdStep.bind(this),
+            this.processIdStep.bind(this),
+            this.finalStep.bind(this)
+        ]));
+
+        this.initialDialogId = WATERFALL_DIALOG;
     }
 
-    formatPedido(response) {
-        let table = `| **DATA DA TRANSAÇÃO** | **COMERCIANTE** | **VALOR** |\n\n`;
-        if (Array.isArray(response)) {
-            response.forEach(element => {
-                table += `| **${format("dd/MM/yyyy", new Date(element.dataTransacao))}** | **${element.comerciante}** | **R$ ${element.valor.toFixed(2)}** |\n\n`;
-            });
-        } else {
-            table += `| **${format("dd/MM/yyyy", new Date(response.dataTransacao))}** | **${response.comerciante}** | **R$ ${response.valor.toFixed(2)}** |\n\n`;
+    // Passo 1: Solicita o ID do pedido ao usuário
+    async promptForIdStep(stepContext) {
+        return await stepContext.prompt(ID_PROMPT, {
+            prompt: 'Digite o ID para mostrar as informações:'
+        });
+    }
+
+    // Passo 2: Processa o ID e chama a API
+    async processIdStep(stepContext) {
+        const pedidoId = stepContext.result;
+
+        try {
+            // Faz a chamada à API usando o ID do pedido fornecido
+            const response = await axios.get(`https://colocar_api/ecommerce/extrato/buscar-por-id/${pedidoId}`);
+
+            const pedido = response.data;
+
+
+            if (pedido) {
+                let mensagem = `Aqui estão as informações do pedido:\n\n`;
+                const campos = {
+                    "Cpf do Responsável do Pedido:": "cpf",
+                    "ID do Pedido:": "id",
+                    "Produto:": "productName",
+                    "Preço:": "price",
+                    "Data da Compra:": "dataCompra"
+                };
+            
+                Object.entries(campos).forEach(([label, key]) => {
+                    if (key === "price") {
+                        mensagem += `\n${label} R$ ${pedido[key].toFixed(2)}\n`;
+                    } else if (key === "dataCompra") {
+                        mensagem += `\n${label} ${new Date(pedido[key]).toLocaleString('pt-BR')}\n`;
+                    } else {
+                        mensagem += `\n${label} ${pedido[key]}\n`;
+                    }
+                });
+            
+                await stepContext.context.sendActivity(mensagem);
+            } else {
+                await stepContext.context.sendActivity('Nenhum pedido encontrado.');
+            }
+            
+        } catch (error) {
+            console.error('Erro ao chamar a API:', error);
+            await stepContext.context.sendActivity('Ocorreu um erro ao obter do pedido.');
         }
-    
-        return table;
+
+        return await stepContext.next();
     }
-}    
+    async finalStep(stepContext) {
+        await stepContext.context.sendActivity('Posso ajudar em mais alguma coisa?');
+        return await stepContext.endDialog();
+    }
+}
 
 module.exports.Pedido = Pedido;
+
