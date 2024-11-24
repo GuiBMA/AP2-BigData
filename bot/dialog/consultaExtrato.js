@@ -38,7 +38,7 @@ class ConsultaExtrato extends ComponentDialog {
 
         try {
             // Fazendo uma requisição para obter os dados do extrato
-            const apiResponse = await axios.get(`https://apipedidosextratos.azurewebsites.net/ecommerce/extrato/buscar-por-cpf/${cpfUsuario}`);
+            const apiResponse = await axios.get(`https://apipedidosextratos.azurewebsites.net/produtos/categoria/{categoria}/${cpfUsuario}`);
             const extratoData = apiResponse.data;
 
             if (extratoData && extratoData.length > 0) {
