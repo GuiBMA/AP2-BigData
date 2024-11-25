@@ -33,7 +33,7 @@ class Extrato extends ComponentDialog {
         const cpf = stepContext.result;
 
         try {
-            const response = await axios.get(`https://api-ecommerce-teste.azurewebsites.net/cartao_credito/transacao/cpf/${cpf}`);
+            const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/`);
 
             const extrato = response.data;
 
