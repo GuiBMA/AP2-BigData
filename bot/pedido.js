@@ -34,9 +34,7 @@ class Pedido extends ComponentDialog {
 
         try {
             const response = await axios.get(`https://api-ecommerce-teste.azurewebsites.net/ecommerce/orders/idProduto/${idProduto}`);
-
             const pedido = response.data;
-
 
             if (pedido) {
                 let mensagem = `Aqui estão as informações do pedido:\n\n`;
@@ -47,29 +45,32 @@ class Pedido extends ComponentDialog {
                     "Preço:": "price",
                     "Data da Compra:": "dataCompra"
                 };
-            
+
                 Object.entries(campos).forEach(([label, key]) => {
+                    const valor = pedido[key]; // Obtem o valor do pedido com base na chave
                     if (key === "price") {
-                        mensagem += `\n${label} R$ ${pedido[key].toFixed(2)}\n`;
+                        const preco = parseFloat(valor); // Converte o valor para número
+                        mensagem += `\n${label} R$ ${isNaN(preco) ? 'Valor indisponível' : preco.toFixed(2)}\n`;
                     } else if (key === "dataCompra") {
-                        mensagem += `\n${label} ${new Date(pedido[key]).toLocaleString('pt-BR')}\n`;
+                        mensagem += `\n${label} ${valor ? new Date(valor).toLocaleString('pt-BR') : 'Data indisponível'}\n`;
                     } else {
-                        mensagem += `\n${label} ${pedido[key]}\n`;
+                        mensagem += `\n${label} ${valor || 'Informação indisponível'}\n`;
                     }
                 });
-            
+
                 await stepContext.context.sendActivity(mensagem);
             } else {
                 await stepContext.context.sendActivity('Nenhum pedido encontrado.');
             }
-            
         } catch (error) {
             console.error('Erro ao chamar a API:', error);
-            await stepContext.context.sendActivity('Ocorreu um erro ao obter do pedido.');
+            await stepContext.context.sendActivity('Ocorreu um erro ao obter as informações do pedido.');
         }
 
         return await stepContext.next();
     }
+
+    // Passo 3: Mensagem final
     async finalStep(stepContext) {
         await stepContext.context.sendActivity('Posso ajudar em mais alguma coisa?');
         return await stepContext.endDialog();
@@ -77,4 +78,3 @@ class Pedido extends ComponentDialog {
 }
 
 module.exports.Pedido = Pedido;
-

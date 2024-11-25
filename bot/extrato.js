@@ -33,9 +33,10 @@ class Extrato extends ComponentDialog {
         const cpf = stepContext.result;
 
         try {
-            const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/`);
+            const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/1`);
 
             const extrato = response.data;
+            console.log(extrato);
 
             if (extrato && extrato.length > 0) {
                 let mensagem = 'Extrato:\n\n';
@@ -43,14 +44,14 @@ class Extrato extends ComponentDialog {
                     "CPF do Responsável:": "cpf",
                     "ID da Compra:": "id",
                     "Produto:": "productName",
-                    "Preço:": "price",
+                    "Preço:": "valor",
                     "Data da Compra:": "dataCompra"
                 };
             
                 extrato.forEach(item => {
                     Object.entries(campos).forEach(([label, key]) => {
-                        if (key === "price") {
-                            mensagem += `\n${label} R$ ${item[key].toFixed(2)}\n`;
+                        if (key === "valor") {
+                            mensagem += `\n${label} R$ ${item["valor"]}\n`;
                         } else if (key === "dataCompra") {
                             mensagem += `\n${label} ${new Date(item[key]).toLocaleString('pt-BR')}\n`;
                         } else {
