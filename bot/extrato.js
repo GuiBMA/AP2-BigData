@@ -31,6 +31,7 @@ class Extrato extends ComponentDialog {
     // Passo 2: Processa o CPF e chama a API
     async processCpfStep(stepContext) {
         const cpf = stepContext.result;
+        // no swagger ta puxando o id da transacao, no caso teria que pedir o cpf
 
         try {
             const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/1`);
