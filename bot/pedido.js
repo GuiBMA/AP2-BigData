@@ -33,8 +33,7 @@ class Pedido extends ComponentDialog {
         const pedidoId = stepContext.result;
 
         try {
-            // Faz a chamada à API usando o ID do pedido fornecido
-            const response = await axios.get(`https://colocar_api/ecommerce/extrato/buscar-por-id/${pedidoId}`);
+            const response = await axios.get(`https://api-ecommerce-teste.azurewebsites.net/ecommerce/extrato/buscar-por-id/${pedidoId}`);
 
             const pedido = response.data;
 

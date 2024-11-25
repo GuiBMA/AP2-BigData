@@ -19,8 +19,7 @@ class Produto extends ComponentDialog {
     // Passo 1: Busca todos os produtos da API
     async fetchAllProductsStep(stepContext) {
         try {
-            // Faz a chamada à API para buscar todos os produtos
-            const response = await axios.get(`https://colocar_api/ecommerce/products/produtos`);
+            const response = await axios.get(`https://api-ecommerce-teste.azurewebsites.net/ecommerce/produto/produtos`);
 
             const produtos = response.data;
 

@@ -40,6 +40,11 @@ public class ClienteService {
         return cliente;
     }
 
+    public Cliente buscarPorCpf(String cpf) {
+        return clienteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new RuntimeException("Cliente com CPF " + cpf + " não encontrado."));
+    }
+
     public Cliente associarCartao(Cartao cartao, int id) throws Exception {
         Optional<Cliente> clienteExistente = clienteRepository.findById(id);
 

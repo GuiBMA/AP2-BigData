@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProdutoRepository extends CosmosRepository<Produto, String> {
     List<Produto> findByNomeProduto(String nomeProduto);
     List<Produto> findByCategoriaProduto(String categoriaProduto);
+    List<Produto> findAll();
 }

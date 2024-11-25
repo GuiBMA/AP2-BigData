@@ -22,6 +22,10 @@ public class ProdutoService {
         return this.produtoRepository.findById(idProduto);
     }
 
+    public List<Produto> buscarTodosProdutos() {
+        return (List<Produto>) produtoRepository.findAll();
+    }
+
     public void save(Produto produto) {
         produto.setIdProduto(UUID.randomUUID().toString());
         this.produtoRepository.save(produto);

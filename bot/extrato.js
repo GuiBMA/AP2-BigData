@@ -33,8 +33,7 @@ class Extrato extends ComponentDialog {
         const cpf = stepContext.result;
 
         try {
-            // Faz a chamada à API usando o CPF fornecido
-            const response = await axios.get(`https://colocar_api/ecommerce/extrato/buscar-por-cpf/${cpf}`);
+            const response = await axios.get(`https://api-ecommerce-teste.azurewebsites.net/ecommerce/extrato/buscar-por-cpf/${cpf}`);
 
             const extrato = response.data;
 

@@ -1,8 +1,8 @@
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, DialogSet, DialogTurnStatus } = require('botbuilder-dialogs');
+
 const { Extrato } = require('../Extrato');
 const { Pedido } = require('../Pedido');
 const { Produto } = require('../Produto');
-
 
 const WATERFALL_DIALOG = 'waterfallDialog';
 const CHOICE_PROMPT = 'choicePrompt';
@@ -23,7 +23,6 @@ class MainDialog extends ComponentDialog {
             this.choiceCardStep.bind(this),
             this.processChoiceStep.bind(this)
         ]));
-
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
