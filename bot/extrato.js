@@ -34,7 +34,7 @@ class Extrato extends ComponentDialog {
         // no swagger ta puxando o id da transacao, no caso teria que pedir o cpf
 
         try {
-            const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/1`);
+            const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/1`); // consertar caminho pois so esta pegando o primeiro
 
             const extrato = response.data;
             console.log(extrato);
