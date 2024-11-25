@@ -13,8 +13,8 @@ class Extrato extends ComponentDialog {
 
         // Configurar o WaterfallDialog com os novos passos
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG, [
-            this.promptForCpfStep.bind(this),
-            this.processCpfStep.bind(this),
+            this.promptForIDStep.bind(this),
+            this.processExtratoStep.bind(this),
             this.finalStep.bind(this)
         ]));
 
@@ -22,38 +22,35 @@ class Extrato extends ComponentDialog {
     }
 
     // Passo 1: Solicita o CPF ao usuário
-    async promptForCpfStep(stepContext) {
+    async promptForIDStep(stepContext) {
         return await stepContext.prompt(CPF_PROMPT, {
-            prompt: 'Digite o CPF para mostrar o extrato:'
+            prompt: 'Digite o ID do cartao para mostrar o extrato:'
         });
     }
 
     // Passo 2: Processa o CPF e chama a API
-    async processCpfStep(stepContext) {
+    async processExtratoStep(stepContext) {
         const cpf = stepContext.result;
         // no swagger ta puxando o id da transacao, no caso teria que pedir o cpf
 
         try {
             const response = await axios.get(`https://ap2-bigdata-20242-cartaocredito.azurewebsites.net/transacao/extrato-cartao/1`); // consertar caminho pois so esta pegando o primeiro
-
             const extrato = response.data;
-            console.log(extrato);
 
             if (extrato && extrato.length > 0) {
                 let mensagem = 'Extrato:\n\n';
                 const campos = {
-                    "CPF do Responsável:": "cpf",
-                    "ID da Compra:": "id",
-                    "Produto:": "productName",
+                    "Compra:": "id",
+                    "Produto:": "comerciante",
                     "Preço:": "valor",
-                    "Data da Compra:": "dataCompra"
+                    "Data da Compra:": "dataTransacao"
                 };
             
                 extrato.forEach(item => {
                     Object.entries(campos).forEach(([label, key]) => {
                         if (key === "valor") {
                             mensagem += `\n${label} R$ ${item["valor"]}\n`;
-                        } else if (key === "dataCompra") {
+                        } else if (key === "dataTransacao") {
                             mensagem += `\n${label} ${new Date(item[key]).toLocaleString('pt-BR')}\n`;
                         } else {
                             mensagem += `\n${label} ${item[key]}\n`;
