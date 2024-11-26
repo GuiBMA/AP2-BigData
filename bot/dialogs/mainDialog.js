@@ -1,7 +1,7 @@
 const { ComponentDialog, WaterfallDialog, ChoicePrompt, DialogSet, DialogTurnStatus } = require('botbuilder-dialogs');
 
 const { Extrato } = require('../Extrato');
-const { Pedido } = require('../Pedido');
+const { Pedido } = require('../pedido');
 const { Produto } = require('../Produto');
 
 const WATERFALL_DIALOG = 'waterfallDialog';
