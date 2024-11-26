@@ -24,16 +24,16 @@ class Pedido extends ComponentDialog {
     // Passo 1: Solicita o ID do pedido ao usuário
     async promptForIdStep(stepContext) {
         return await stepContext.prompt(ID_PROMPT, {
-            prompt: 'Digite o ID para mostrar as informações:'
+            prompt: 'Digite o ID do produto para mostrar as informações:'
         });
     }
 
     // Passo 2: Processa o ID e chama a API
     async processIdStep(stepContext) {
-        const idProduto = stepContext.result;
+        const id = stepContext.result;
 
         try {
-            const response = await axios.get(`https://ecommerce-api-luis-cga2dqfsaqb4emhu.centralus-01.azurewebsites.net/ecommerce/orders/idProduto/${idProduto}`);
+            const response = await axios.get(`https://ecommerce-api-luis-cga2dqfsaqb4emhu.centralus-01.azurewebsites.net/ecommerce/orders/idProduto/${id}`);
             const pedido = response.data;
 
             if (pedido) {
